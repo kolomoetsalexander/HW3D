@@ -5,6 +5,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+struct Camera{
+    glm::vec3 position;
+    glm::vec3 front;
+    glm::vec3 up;
+    float yaw;
+    float pitch;
+    float lastX;
+    float lastY;
+    bool mousePressed;
+};
 std::string readFile(const char* filename){
     std::ifstream file(filename);
     std::string line;
@@ -28,11 +38,44 @@ GLuint compileShader(GLuint type, const char* filename){
     glCompileShader(shader);
     return shader;
 }
+void mouse_callback(GLFWwindow* window, double xpos, double ypos){
+    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS){
+        camera->mousePressed = false;
+        return;
+    }
+    if (!camera->mousePressed){
+        camera->lastX = xpos;
+        camera->lastY = ypos;
+        camera->mousePressed = true;
+        return;
+    }
+    float xoffset = xpos - camera->lastX;
+    float yoffset = camera->lastY - ypos;
+    camera->lastX = xpos;
+    camera->lastY = ypos;
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+    camera->yaw += xoffset;
+    camera->pitch += yoffset;
+    if (camera->pitch > 89.0f){
+        camera->pitch = 89.0f;
+    }
+    if (camera->pitch < -89.0f){
+        camera->pitch = -89.0f;
+    }
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(camera->yaw))*cos(glm::radians(camera->pitch));
+    direction.y = sin(glm::radians(camera->pitch));
+    direction.z = sin(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
+    camera->front = glm::normalize(direction);
+}
 int main(){
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(
-        800,
-        600,
+        3200,
+        2000,
         "HW3D",
         nullptr,
         nullptr
@@ -50,7 +93,7 @@ int main(){
     {
         0.0f,  0.6f,  0.0f,//0-верхняя
         -0.6f, -0.4f,  0.4f,//1-левая
-        0.6f, -0.4f,  0.4f,//2-правая
+        0.6f, -0.4f,  0.4f, //2-правая
         0.0f, -0.4f, -0.6f//3-задняя
     };
     unsigned int indices[] = 
@@ -91,8 +134,8 @@ int main(){
         3 * sizeof(float),
         (void*)0
     );
-    // создаем шейдеры
     glEnableVertexAttribArray(0);
+
     GLuint vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
     GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
     // Создаём shader program
@@ -105,17 +148,45 @@ int main(){
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
-    //матрица камеры
+     //матрица камеры
     glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
     GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
     //матрица перспективы
     glm::mat4 perspective = glm::mat4(1.0f);
-    perspective = glm::perspective(glm::radians(30.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    perspective = glm::perspective(glm::radians(90.0f), 3200.0f / 2000.0f, 0.1f, 100.0f);
     GLuint perspectiveLoc = glGetUniformLocation(shaderProgram, "perspective");
-
+    Camera camera;
+    camera.position = glm::vec3(0.0f, 0.0f, 3.0f);
+    camera.front = glm::vec3(0.0f, 0.0f, -1.0f);
+    camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+    camera.yaw = -90.0f;
+    camera.pitch = 0.0f;
+    camera.lastX = 1600.0f;
+    camera.lastY = 1000.0f;
+    camera.mousePressed = false;
+    
+    glfwSetWindowUserPointer(window, &camera);
+    glfwSetCursorPosCallback(window, mouse_callback);
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+    //скорость перемещения
+    float speed = 0.05f;
+    
     while(!glfwWindowShouldClose(window)){
+        if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+            camera.position += camera.front*speed;
+        }
+        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+            camera.position -= camera.front*speed;
+        }
+        glm::vec3 cameraRight = glm::normalize(glm::cross(camera.front, camera.up));
+        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+            camera.position += cameraRight*speed;
+        }
+        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+            camera.position -= cameraRight*speed;
+        }
+
+        view = glm::lookAt(camera.position, camera.position + camera.front, camera.up);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
         glUseProgram(shaderProgram);
