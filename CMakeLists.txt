@@ -4,6 +4,7 @@ project(HW3D)
 
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
 
 add_executable(HW3D
     main.cpp
@@ -17,4 +18,5 @@ target_include_directories(HW3D PRIVATE
 target_link_libraries(HW3D
     OpenGL::GL
     glfw
+    glm::glm
 )
