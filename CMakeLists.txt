@@ -11,6 +11,7 @@ add_executable(HW3D
     glad/src/glad.c
     Shaders.cpp
     Camera.cpp
+    Geometry.cpp
 )
 
 target_include_directories(HW3D PRIVATE

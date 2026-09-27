@@ -25,3 +25,17 @@ GLuint compileShader(GLuint type, const char* filename){
     glCompileShader(shader);
     return shader;
 }
+GLuint createShaderProgram(const char* vertexFilename, const char* fragmentFilename){
+    GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexFilename);
+    GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentFilename);
+    // Создаём shader program
+    GLuint shaderProgram = glCreateProgram();
+
+    // Добавляем шейдеры в программу
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+    return shaderProgram;
+}

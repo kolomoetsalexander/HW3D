@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Shaders.hpp"
 #include "Camera.hpp"
+#include "Geometry.hpp"
 #include <iostream>
 int main(){
     glfwInit();
@@ -25,71 +26,8 @@ int main(){
     }
     //глубина цвета
     glEnable(GL_DEPTH_TEST);
-
-    float vertices[] =
-    {
-        0.0f,  0.6f,  0.0f,//0-верхняя
-        -0.6f, -0.4f,  0.4f,//1-левая
-        0.6f, -0.4f,  0.4f, //2-правая
-        0.0f, -0.4f, -0.6f//3-задняя
-    };
-    unsigned int indices[] = 
-    {
-        0, 1, 2,
-        0, 3, 1,
-        0, 2, 3,
-        1, 3, 2
-    };
-    GLuint VAO;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    GLuint VBO;
-    glGenBuffers(1, &VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // загружаем в буффер
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        sizeof(vertices),
-        vertices,
-        GL_STATIC_DRAW
-    );
-    GLuint EBO;
-    glGenBuffers(1, &EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(
-        GL_ELEMENT_ARRAY_BUFFER,
-        sizeof(indices),
-        indices,
-        GL_STATIC_DRAW
-    );
-    // говорим, как читать то, что загрузили
-    glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        3 * sizeof(float),
-        (void*)0
-    );
-    glEnableVertexAttribArray(0);
-
-    GLuint vertexShader = compileShader(GL_VERTEX_SHADER, "shaders/vertex.glsl");
-    GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
-    // Создаём shader program
-    GLuint shaderProgram = glCreateProgram();
-
-    // Добавляем шейдеры в программу
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    int success;
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-
-    if (!success) {
-        char infoLog[512];
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-        std::cout << infoLog << std::endl;
-    }
+    Geometry figure = createFigure();
+    GLuint shaderProgram = createShaderProgram("shaders/vertex.glsl", "shaders/fragment.glsl");
     //создаем матрицу поворота
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -142,8 +80,8 @@ int main(){
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(perspective));
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(figure.VAO);
+        glDrawElements(GL_TRIANGLES, figure.indexCount, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
     }
     glfwTerminate();
