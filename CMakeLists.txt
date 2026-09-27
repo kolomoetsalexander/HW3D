@@ -9,6 +9,8 @@ find_package(glm REQUIRED)
 add_executable(HW3D
     main.cpp
     glad/src/glad.c
+    Shaders.cpp
+    Camera.cpp
 )
 
 target_include_directories(HW3D PRIVATE

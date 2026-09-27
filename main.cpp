@@ -5,72 +5,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-struct Camera{
-    glm::vec3 position;
-    glm::vec3 front;
-    glm::vec3 up;
-    float yaw;
-    float pitch;
-    float lastX;
-    float lastY;
-    bool mousePressed;
-};
-std::string readFile(const char* filename){
-    std::ifstream file(filename);
-    std::string line;
-    std::string source;
-    while(std::getline(file, line)){
-        source += line;
-        source += "\n";
-    }
-    return source;
-}
-GLuint compileShader(GLuint type, const char* filename){
-    std::string source = readFile(filename);
-    const char* sourceCStr = source.c_str();
-    GLuint shader = glCreateShader(type);
-    glShaderSource(
-        shader,
-        1,
-        &sourceCStr,
-        nullptr
-    );
-    glCompileShader(shader);
-    return shader;
-}
-void mouse_callback(GLFWwindow* window, double xpos, double ypos){
-    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) != GLFW_PRESS){
-        camera->mousePressed = false;
-        return;
-    }
-    if (!camera->mousePressed){
-        camera->lastX = xpos;
-        camera->lastY = ypos;
-        camera->mousePressed = true;
-        return;
-    }
-    float xoffset = xpos - camera->lastX;
-    float yoffset = camera->lastY - ypos;
-    camera->lastX = xpos;
-    camera->lastY = ypos;
-    float sensitivity = 0.1f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-    camera->yaw += xoffset;
-    camera->pitch += yoffset;
-    if (camera->pitch > 89.0f){
-        camera->pitch = 89.0f;
-    }
-    if (camera->pitch < -89.0f){
-        camera->pitch = -89.0f;
-    }
-    glm::vec3 direction;
-    direction.x = cos(glm::radians(camera->yaw))*cos(glm::radians(camera->pitch));
-    direction.y = sin(glm::radians(camera->pitch));
-    direction.z = sin(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
-    camera->front = glm::normalize(direction);
-}
+#include "Shaders.hpp"
+#include "Camera.hpp"
+#include <iostream>
 int main(){
     glfwInit();
     GLFWwindow* window = glfwCreateWindow(
@@ -140,23 +77,35 @@ int main(){
     GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
     // Создаём shader program
     GLuint shaderProgram = glCreateProgram();
+
     // Добавляем шейдеры в программу
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
     glLinkProgram(shaderProgram);
+    int success;
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+
+    if (!success) {
+        char infoLog[512];
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        std::cout << infoLog << std::endl;
+    }
     //создаем матрицу поворота
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
+
      //матрица камеры
     glm::mat4 view = glm::mat4(1.0f);
     GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
+    
     //матрица перспективы
     glm::mat4 perspective = glm::mat4(1.0f);
     perspective = glm::perspective(glm::radians(90.0f), 3200.0f / 2000.0f, 0.1f, 100.0f);
     GLuint perspectiveLoc = glGetUniformLocation(shaderProgram, "perspective");
+
     Camera camera;
-    camera.position = glm::vec3(0.0f, 0.0f, 3.0f);
+    camera.position = glm::vec3(1.0f, 0.0f, 3.0f);
     camera.front = glm::vec3(0.0f, 0.0f, -1.0f);
     camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
     camera.yaw = -90.0f;
@@ -164,13 +113,13 @@ int main(){
     camera.lastX = 1600.0f;
     camera.lastY = 1000.0f;
     camera.mousePressed = false;
-    
+
     glfwSetWindowUserPointer(window, &camera);
     glfwSetCursorPosCallback(window, mouse_callback);
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+
     //скорость перемещения
     float speed = 0.05f;
-    
     while(!glfwWindowShouldClose(window)){
         if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
             camera.position += camera.front*speed;
