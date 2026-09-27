@@ -1,9 +1,16 @@
 #version 330 core
 
 out vec4 color;
-in vec3 vColor;
+in vec3 Normal;
 
 void main()
 {
-    color = vec4(1.0, 0.0, 0.0, 1.0);
+    vec3 N = normalize(Normal);
+
+    color = vec4(
+        N.z,
+        N.z,
+        N.z,
+        1.0
+    );
 }
