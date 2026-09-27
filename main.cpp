@@ -43,11 +43,22 @@ int main(){
         glfwTerminate();
         return -1;
     }
+    //глубина цвета
+    glEnable(GL_DEPTH_TEST);
+
     float vertices[] =
     {
-         0.0f,  0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f
+        0.0f,  0.6f,  0.0f,//0-верхняя
+        -0.6f, -0.4f,  0.4f,//1-левая
+        0.6f, -0.4f,  0.4f,//2-правая
+        0.0f, -0.4f, -0.6f//3-задняя
+    };
+    unsigned int indices[] = 
+    {
+        0, 1, 2,
+        0, 3, 1,
+        0, 2, 3,
+        1, 3, 2
     };
     GLuint VAO;
     glGenVertexArrays(1, &VAO);
@@ -60,6 +71,15 @@ int main(){
         GL_ARRAY_BUFFER,
         sizeof(vertices),
         vertices,
+        GL_STATIC_DRAW
+    );
+    GLuint EBO;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(
+        GL_ELEMENT_ARRAY_BUFFER,
+        sizeof(indices),
+        indices,
         GL_STATIC_DRAW
     );
     // говорим, как читать то, что загрузили
@@ -83,7 +103,7 @@ int main(){
     glLinkProgram(shaderProgram);
     //создаем матрицу поворота
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
     //матрица камеры
     glm::mat4 view = glm::mat4(1.0f);
@@ -91,19 +111,19 @@ int main(){
     GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
     //матрица перспективы
     glm::mat4 perspective = glm::mat4(1.0f);
-    perspective = glm::perspective(30.0f, 800.0f / 600.0f, 0.1f, 100.0f);
+    perspective = glm::perspective(glm::radians(30.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     GLuint perspectiveLoc = glGetUniformLocation(shaderProgram, "perspective");
 
     glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
     while(!glfwWindowShouldClose(window)){
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
         glUseProgram(shaderProgram);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(perspective));
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
     }
     glfwTerminate();
