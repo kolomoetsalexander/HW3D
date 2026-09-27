@@ -5,19 +5,26 @@ glm::vec3 calculateNormal(const glm::vec3& A, const glm::vec3& B, const glm::vec
     glm::vec3 normal = glm::cross(AB, AC);
     return glm::normalize(normal);
 }
-Geometry createTriangule(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C){
-    glm::vec3 normal = calculateNormal(A, B, C);
-    float vertices[] =
-    {
-        A.x, A.y, A.z, normal.x, normal.y, normal.z,
-        B.x, B.y, B.z, normal.x, normal.y, normal.z,
-        C.x, C.y, C.z, normal.x, normal.y, normal.z
-    };
-    unsigned int indices[] =
-    {
-        0, 1, 2
-    };
-    
+Geometry createScene(const std::vector<Triangle>& triangles, const std::vector<bool>& intersects){
+    std::vector<float> vertices;
+    vertices.reserve(triangles.size() * 3 * 7);
+    for (size_t i = 0; i < triangles.size(); ++i){
+        const Triangle& t = triangles[i];
+        glm::vec3 normal = calculateNormal(t.A, t.B, t.C);
+        // пока не проверяю
+        float isRed = (i < intersects.size() && intersects[i]) ? 1.0f : 0.0f;
+
+        const glm::vec3* pts[3] = { &t.A, &t.B, &t.C };
+        for (int v = 0; v < 3; ++v){
+            vertices.push_back(pts[v]->x);
+            vertices.push_back(pts[v]->y);
+            vertices.push_back(pts[v]->z);
+            vertices.push_back(normal.x);
+            vertices.push_back(normal.y);
+            vertices.push_back(normal.z);
+            vertices.push_back(isRed);
+        }
+    }
     Geometry geometry;
     glGenVertexArrays(1, &geometry.VAO);
     glBindVertexArray(geometry.VAO);
@@ -25,39 +32,33 @@ Geometry createTriangule(const glm::vec3& A, const glm::vec3& B, const glm::vec3
     glBindBuffer(GL_ARRAY_BUFFER, geometry.VBO);
     glBufferData(
         GL_ARRAY_BUFFER,
-        sizeof(vertices),
-        vertices,
+        vertices.size() * sizeof(float),
+        vertices.data(),
         GL_STATIC_DRAW
     );
-
-    glGenBuffers(1, &geometry.EBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry.EBO);
-    glBufferData(
-        GL_ELEMENT_ARRAY_BUFFER,
-        sizeof(indices),
-        indices,
-        GL_STATIC_DRAW
-    );
-
     glVertexAttribPointer(
-        0,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        6 * sizeof(float),
-        (void*)0
-    );
+        0, 
+        3, 
+        GL_FLOAT, 
+        GL_FALSE, 
+        7 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     glVertexAttribPointer(
         1,
-        3,
-        GL_FLOAT,
-        GL_FALSE,
-        6 * sizeof(float),
-        (void*)(3 * sizeof(float))
-    );
+        3, 
+        GL_FLOAT, 
+        GL_FALSE, 
+        7 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    geometry.indexCount = 3;
+
+    glVertexAttribPointer(
+        2, 
+        1, GL_FLOAT, 
+        GL_FALSE, 
+        7 * sizeof(float), 
+        (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    geometry.vertexCount = static_cast<int>(triangles.size() * 3);
     return geometry;
 }
