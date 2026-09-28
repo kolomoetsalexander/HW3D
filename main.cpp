@@ -12,6 +12,7 @@
 #include <iostream>
 int main(){
     std::vector<Triangle> triangles = readTrianglesFromStdin();
+    
     //когда то здесь будет реализация пересечений
      std::vector<bool> intersects(triangles.size(), false);
 
@@ -33,8 +34,8 @@ int main(){
     }
     //глубина цвета
     glEnable(GL_DEPTH_TEST);
-    Geometry scene = createScene(triangles, intersects);
 
+    Geometry scene = createScene(triangles, intersects);
     GLuint shaderProgram = createShaderProgram("shaders/vertex.glsl", "shaders/fragment.glsl");
     glm::mat4 model = glm::mat4(1.0f);
     GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
