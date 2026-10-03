@@ -14,7 +14,7 @@
 int main(){
     std::vector<Triangle> triangles = readTrianglesFromStdin();
     
-    //когда то здесь будет реализация пересечений
+    //реализация пересечений
     std::vector<bool> intersects(triangles.size(), false);
      for (size_t i = 0; i < triangles.size(); ++i){
         for (size_t j = i + 1; j < triangles.size(); ++j){
