@@ -13,6 +13,7 @@ add_executable(HW3D
     Camera.cpp
     Geometry.cpp
     Input.cpp
+    Intersection.cpp
 )
 
 target_include_directories(HW3D PRIVATE

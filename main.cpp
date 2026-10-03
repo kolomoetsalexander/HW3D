@@ -10,22 +10,25 @@
 #include "Geometry.hpp"
 #include "Input.hpp"
 #include <iostream>
+#include "Intersection.hpp"
 int main(){
     std::vector<Triangle> triangles = readTrianglesFromStdin();
     
     //когда то здесь будет реализация пересечений
-     std::vector<bool> intersects(triangles.size(), false);
+    std::vector<bool> intersects(triangles.size(), false);
+     for (size_t i = 0; i < triangles.size(); ++i){
+        for (size_t j = i + 1; j < triangles.size(); ++j){
+            if (trianglesIntersect(triangles[i], triangles[j])){
+                intersects[i] = true;
+                intersects[j] = true;
+            }
+        }
+    }
 
 
      
     glfwInit();
-    GLFWwindow* window = glfwCreateWindow(
-        3200,
-        2000,
-        "HW3D",
-        nullptr,
-        nullptr
-    );
+    GLFWwindow* window = glfwCreateWindow(3200, 2000, "HW3D", nullptr, nullptr);
     glfwMakeContextCurrent(window);
     // инициализируем GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {

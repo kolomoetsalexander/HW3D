@@ -11,7 +11,7 @@ Geometry createScene(const std::vector<Triangle>& triangles, const std::vector<b
     for (size_t i = 0; i < triangles.size(); ++i){
         const Triangle& t = triangles[i];
         glm::vec3 normal = calculateNormal(t.A, t.B, t.C);
-        // пока не проверяю
+        // 
         float isRed = (i < intersects.size() && intersects[i]) ? 1.0f : 0.0f;
 
         const glm::vec3* pts[3] = { &t.A, &t.B, &t.C };
@@ -36,28 +36,13 @@ Geometry createScene(const std::vector<Triangle>& triangles, const std::vector<b
         vertices.data(),
         GL_STATIC_DRAW
     );
-    glVertexAttribPointer(
-        0, 
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        7 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(
-        1,
-        3, 
-        GL_FLOAT, 
-        GL_FALSE, 
-        7 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1,3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    glVertexAttribPointer(
-        2, 
-        1, GL_FLOAT, 
-        GL_FALSE, 
-        7 * sizeof(float), 
-        (void*)(6 * sizeof(float)));
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
     geometry.vertexCount = static_cast<int>(triangles.size() * 3);
     return geometry;
