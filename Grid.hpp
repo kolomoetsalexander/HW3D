@@ -15,8 +15,8 @@ private:
         glm::vec3 max;
     };
     struct CellRange {
-        int lo[3];
-        int hi[3];
+        int low[3];
+        int high[3];
     };
     // coordinates to uniq key
     long long cellKey(int x, int y, int z) const;

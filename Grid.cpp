@@ -52,14 +52,14 @@ Grid::Grid(const std::vector<Triangle>& triangles) : origin(0.0f), cellSize(1.0f
 
             int hi = static_cast<int>((boxes[i].max[axis] - origin[axis]) / cellSize);
 
-            range.lo[axis] = std::clamp(lo, 0, dims[axis] - 1);
+            range.low[axis] = std::clamp(lo, 0, dims[axis] - 1);
 
-            range.hi[axis] = std::clamp(hi, 0, dims[axis] - 1);
+            range.high[axis] = std::clamp(hi, 0, dims[axis] - 1);
         }
 
-        for (int x = range.lo[0]; x <= range.hi[0]; ++x){
-            for (int y = range.lo[1]; y <= range.hi[1]; ++y){
-                for (int z = range.lo[2]; z <= range.hi[2]; ++z){
+        for (int x = range.low[0]; x <= range.high[0]; ++x){
+            for (int y = range.low[1]; y <= range.high[1]; ++y){
+                for (int z = range.low[2]; z <= range.high[2]; ++z){
                     cells[cellKey(x, y, z)].push_back(static_cast<int>(i));
                 }
             }
@@ -87,7 +87,7 @@ Grid::candidatePairs() const{
                 bool isReferenceCell = true;
                 int cellCoordinates[3] = {x, y, z};
                 for (int axis = 0; axis < 3; ++axis){
-                    int firstCommonCell = std::max(ranges[i].lo[axis], ranges[j].lo[axis]);
+                    int firstCommonCell = std::max(ranges[i].low[axis], ranges[j].low[axis]);
 
                     if (cellCoordinates[axis] != firstCommonCell){
                         isReferenceCell = false;
