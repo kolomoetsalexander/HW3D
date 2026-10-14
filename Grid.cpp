@@ -8,6 +8,9 @@ const float GRID_EPS = 1e-5f;
 const int MAX_DIM = 128;
 
 long long Grid::cellKey(int x, int y, int z) const{
+    //key = (idx*qy + idy)*qz + idz
+    //idx - cell id by x
+    //qy - cell quantity by y
     return (static_cast<long long>(x) * dims[1] + y) * dims[2] + z;
 }
 //make spatial grid and distribute triangulars
