@@ -11,6 +11,7 @@
 #include "Input.hpp"
 #include <iostream>
 #include "Intersection.hpp"
+#include "Grid.hpp"
 int main(){
     std::vector<Triangle> triangles = readTrianglesFromStdin();
     

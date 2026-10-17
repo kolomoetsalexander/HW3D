@@ -19,7 +19,8 @@ Grid::Grid(const std::vector<Triangle>& triangles) : origin(0.0f), cellSize(1.0f
     dims[1] = 1;
     dims[2] = 1;
     const std::size_t n = triangles.size();
-    if (n == 0) {
+    //if there no triangulars
+    if (n == 0){
         return;
     }
 // AABB for every triangule
@@ -27,7 +28,7 @@ Grid::Grid(const std::vector<Triangle>& triangles) : origin(0.0f), cellSize(1.0f
     glm::vec3 sceneMin(std::numeric_limits<float>::infinity());
     glm::vec3 sceneMax(-std::numeric_limits<float>::infinity());
     float sumSize = 0.0f;
-    for (std::size_t i = 0; i < n; ++i){
+    for (std::size_t i = 0; i < n; i++){
         const Triangle& t = triangles[i];
         boxes[i].min = glm::min(glm::min(t.A, t.B), t.C) - glm::vec3(GRID_EPS);
         boxes[i].max = glm::max(glm::max(t.A, t.B), t.C) + glm::vec3(GRID_EPS);
@@ -43,26 +44,22 @@ Grid::Grid(const std::vector<Triangle>& triangles) : origin(0.0f), cellSize(1.0f
     float maxExtent = std::max(sceneExtent.x, std::max(sceneExtent.y, sceneExtent.z));
     float averageSize = sumSize / static_cast<float>(n);
     cellSize = std::max(averageSize, maxExtent / MAX_DIM);
-    for (int axis = 0; axis < 3; ++axis){
+    for (int axis = 0; axis < 3; axis++){
         dims[axis] = std::min(MAX_DIM, static_cast<int>(sceneExtent[axis] / cellSize) + 1);
     }
 //cells for every triangualar
     ranges.resize(n);
-    for (std::size_t i = 0; i < n; ++i){
+    for (std::size_t i = 0; i < n; i++){
         CellRange& range = ranges[i];
-        for (int axis = 0; axis < 3; ++axis) {
-            int lo = static_cast<int>((boxes[i].min[axis] - origin[axis]) / cellSize);
-
-            int hi = static_cast<int>((boxes[i].max[axis] - origin[axis]) / cellSize);
-
-            range.low[axis] = std::clamp(lo, 0, dims[axis] - 1);
-
-            range.high[axis] = std::clamp(hi, 0, dims[axis] - 1);
+        for (int axis = 0; axis < 3; axis++){
+            int low = static_cast<int>((boxes[i].min[axis] - origin[axis]) / cellSize);
+            int high = static_cast<int>((boxes[i].max[axis] - origin[axis]) / cellSize);
+            range.low[axis] = std::clamp(low, 0, dims[axis] - 1);
+            range.high[axis] = std::clamp(high, 0, dims[axis] - 1);
         }
-
-        for (int x = range.low[0]; x <= range.high[0]; ++x){
-            for (int y = range.low[1]; y <= range.high[1]; ++y){
-                for (int z = range.low[2]; z <= range.high[2]; ++z){
+        for (int x = range.low[0]; x <= range.high[0]; x++){
+            for (int y = range.low[1]; y <= range.high[1]; y++){
+                for (int z = range.low[2]; z <= range.high[2]; z++){
                     cells[cellKey(x, y, z)].push_back(static_cast<int>(i));
                 }
             }
@@ -70,8 +67,7 @@ Grid::Grid(const std::vector<Triangle>& triangles) : origin(0.0f), cellSize(1.0f
     }
 }
 //pairs of candidates
-std::vector<std::pair<std::size_t, std::size_t>>
-Grid::candidatePairs() const{
+std::vector<std::pair<std::size_t, std::size_t>> Grid::candidatePairs() const{
     std::vector<std::pair<std::size_t, std::size_t>> result;
     //all no empty
     for (const auto& cell : cells){
@@ -83,13 +79,13 @@ Grid::candidatePairs() const{
         int y = static_cast<int>(key % dims[1]);
         int z = static_cast<int>(key / dims[1]);
         //all pairs in cell
-        for (std::size_t p = 0; p < ids.size(); ++p){
-            for (std::size_t q = p + 1; q < ids.size(); ++q){
+        for (std::size_t p = 0; p < ids.size(); p++){
+            for (std::size_t q = p + 1; q < ids.size(); q++){
                 int i = ids[p];
                 int j = ids[q];
                 bool isReferenceCell = true;
                 int cellCoordinates[3] = {x, y, z};
-                for (int axis = 0; axis < 3; ++axis){
+                for (int axis = 0; axis < 3; axis++){
                     int firstCommonCell = std::max(ranges[i].low[axis], ranges[j].low[axis]);
 
                     if (cellCoordinates[axis] != firstCommonCell){
@@ -105,12 +101,11 @@ Grid::candidatePairs() const{
                 const Box& a = boxes[i];
                 const Box& b = boxes[j];
 
-                if (a.min.x > b.max.x || b.min.x > a.max.x ||
-                    a.min.y > b.max.y || b.min.y > a.max.y ||
+                if (a.min.x > b.max.x || b.min.x > a.max.x || a.min.y > b.max.y || b.min.y > a.max.y ||
                     a.min.z > b.max.z || b.min.z > a.max.z){
                     continue;
                 }
-                //save pair i < j.
+                //save pair i < j
                 result.emplace_back(static_cast<std::size_t>(std::min(i, j)), static_cast<std::size_t>(std::max(i, j)));
             }
         }
