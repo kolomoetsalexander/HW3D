@@ -9,12 +9,11 @@
 
 // const for pixel
 float EPS = 1e-6f;
-// вообще необходимо расмотреть случай, когда треугольники лежат в 1 пплоскости в 2D
+//pseudo‑vector product in 2D
 float cross2(const glm::vec2& a, const glm::vec2& b){
     return a.x * b.y - a.y * b.x;
 }
-
-// Пересекаются ли отрезки (p1,p2) и (p3,p4) в 2D (без учёта коллинеарного наложения)
+//do line segments (p1,p2) and (p3,p4) intersect in 2D (excluding collinear overlap)
 bool segmentsIntersect2D(const glm::vec2& p1, const glm::vec2& p2, const glm::vec2& p3, const glm::vec2& p4){
     float d1 = cross2(p4 - p3, p1 - p3);
     float d2 = cross2(p4 - p3, p2 - p3);
@@ -25,7 +24,7 @@ bool segmentsIntersect2D(const glm::vec2& p1, const glm::vec2& p2, const glm::ve
     bool straddle2 = (d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0);
     return straddle1 && straddle2;
 }
-// Лежит ли точка p внутри треугольника (a,b,c) в 2D
+//does point p lie inside the triangle (a,b,c) in 2D
 bool pointInTriangle2D(const glm::vec2& p, const glm::vec2& a, const glm::vec2& b, const glm::vec2& c){
     float d1 = cross2(b - a, p - a);
     float d2 = cross2(c - b, p - b);
@@ -35,7 +34,7 @@ bool pointInTriangle2D(const glm::vec2& p, const glm::vec2& a, const glm::vec2& 
     return !(hasNeg && hasPos);
 }
 
-// перевод
+//2D coordinate projection
 glm::vec2 project(const glm::vec3& v, int dropAxis){
     if (dropAxis == 0) 
         return glm::vec2(v.y, v.z);
@@ -44,7 +43,7 @@ glm::vec2 project(const glm::vec3& v, int dropAxis){
     else
         return glm::vec2(v.x, v.y);
 }
-// Треугольники копланарны 
+//if the triangles are coplanar
 bool coplanarTrianglesIntersect(const Triangle& t1, const Triangle& t2, const glm::vec3& normal){
     glm::vec3 absN = glm::abs(normal);
     int dropAxis = 0; // 0=x, 1=y, 2=z
@@ -64,7 +63,7 @@ bool coplanarTrianglesIntersect(const Triangle& t1, const Triangle& t2, const gl
             if (segmentsIntersect2D(ea[0], ea[1], eb[0], eb[1]))
                 return true;
 
-    // Рёбра не пересекаются — но один треугольник может лежать целиком внутри другого
+    //the edges do not intersect - but one triangle can lie entirely within another
     if (pointInTriangle2D(a0, b0, b1, b2)) 
         return true;
     if (pointInTriangle2D(b0, a0, a1, a2)) 
@@ -77,9 +76,8 @@ bool coplanarTrianglesIntersect(const Triangle& t1, const Triangle& t2, const gl
 
 
 
-// Индекс вершины треугольника, чей знак расстояния до другой плоскости
-// отличается от двух остальных ("изолированная" вершина).
-// Предполагает, что d0,d1,d2 не все одного знака (иначе early-reject сработал бы раньше).
+//the index of the triangle vertex whose sign of the distance to another plane differs from the other two isolated vertex
+//assumes that d0, d1, d2 are not all of the same sign, otherwise, early-reject would have triggered earlier
 int isolatedVertex(float d0, float d1, float d2){
     bool s0 = d0 >= 0.0f, s1 = d1 >= 0.0f, s2 = d2 >= 0.0f;
     if (s1 == s2 && s0 != s1) 
@@ -124,14 +122,14 @@ bool trianglesIntersect(const Triangle& t1, const Triangle& t2){
         return false;
     }
 
-    // а если плоскости совпали идем в 2D
+    // and if the planes coincide, we go to 2D
     if (dist0 == 0.0f && dist1 == 0.0f && dist2 == 0.0f){
         return coplanarTrianglesIntersect(t1, t2, N2);
     }
-    //пересечение плоскостей
+    //intersection of planes
     glm::vec3 D = glm::cross(N1, N2);
 
-    //отрезок пересечения плоск
+    //line of planes intersection
     // 2 - 1
     float dist[3] = { dist0, dist1, dist2 };
 
@@ -157,7 +155,7 @@ bool trianglesIntersect(const Triangle& t1, const Triangle& t2){
     float td = ddist[iso2] / (ddist[iso2] - ddist[b2idx]);
     glm::vec3 Q2 = U[iso2] + td * (U[b2idx] - U[iso2]);
 
-    //проецируем на линию пересечения и сравниваем интервалы
+    //project onto the intersection line and compare the intervals
     float tP1 = glm::dot(D, P1);
     float tP2 = glm::dot(D, P2);
     float tQ1 = glm::dot(D, Q1);

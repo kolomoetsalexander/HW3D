@@ -30,6 +30,7 @@ private:
     float cellSize;
     //quantity for every side (x, y, z)
     int dims[3];
+    //from kooridnates to id
     // cell - triangulars' id
     std::unordered_map<long long, std::vector<int>> cells;
 };

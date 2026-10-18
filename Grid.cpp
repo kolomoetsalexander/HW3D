@@ -70,7 +70,7 @@ Grid::Grid(const std::vector<Triangle>& triangles) : origin(0.0f), cellSize(1.0f
 std::vector<std::pair<std::size_t, std::size_t>> Grid::candidatePairs() const{
     std::vector<std::pair<std::size_t, std::size_t>> result;
     //all no empty
-    for (const auto& cell : cells){
+    for(const auto& cell : cells){
         const std::vector<int>& ids = cell.second;
         //restore cell coordinate by key
         long long key = cell.first;
@@ -88,7 +88,7 @@ std::vector<std::pair<std::size_t, std::size_t>> Grid::candidatePairs() const{
                 for (int axis = 0; axis < 3; axis++){
                     int firstCommonCell = std::max(ranges[i].low[axis], ranges[j].low[axis]);
 
-                    if (cellCoordinates[axis] != firstCommonCell){
+                    if(cellCoordinates[axis] != firstCommonCell){
                         isReferenceCell = false;
                         break;
                     }
