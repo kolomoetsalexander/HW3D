@@ -74,10 +74,10 @@ std::vector<std::pair<std::size_t, std::size_t>> Grid::candidatePairs() const{
         const std::vector<int>& ids = cell.second;
         //restore cell coordinate by key
         long long key = cell.first;
-        int x = static_cast<int>(key % dims[2]);
+        int z = static_cast<int>(key % dims[2]);
         key /= dims[2];
         int y = static_cast<int>(key % dims[1]);
-        int z = static_cast<int>(key / dims[1]);
+        int x = static_cast<int>(key / dims[1]);
         //all pairs in cell
         for (std::size_t p = 0; p < ids.size(); p++){
             for (std::size_t q = p + 1; q < ids.size(); q++){

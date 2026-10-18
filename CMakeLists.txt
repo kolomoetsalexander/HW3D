@@ -12,8 +12,9 @@ add_executable(HW3D
     Shaders.cpp
     Camera.cpp
     Geometry.cpp
-    Input.cpp
     Intersection.cpp
+    Grid.cpp
+    Test.cpp
 )
 
 target_include_directories(HW3D PRIVATE

@@ -1,5 +1,4 @@
 #pragma once
 #include "Geometry.hpp"
 #include <vector>
-std::vector<Triangle> readTrianglesFromStdin();
- 
+std::vector<Triangle> generateTriangles(long long n);
