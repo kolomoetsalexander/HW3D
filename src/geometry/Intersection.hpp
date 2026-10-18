@@ -1,3 +1,3 @@
 #pragma once
-#include "Geometry.hpp"
+#include "render/Geometry.hpp"
 bool trianglesIntersect(const Triangle& t1, const Triangle& t2);

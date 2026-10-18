@@ -1,4 +1,4 @@
 #pragma once
-#include "Geometry.hpp"
+#include "render/Geometry.hpp"
 #include <vector>
 std::vector<Triangle> generateTriangles(long long n);

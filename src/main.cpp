@@ -5,14 +5,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Shaders.hpp"
-#include "Camera.hpp"
-#include "Geometry.hpp"
+#include "render/Shaders.hpp"
+#include "render/Camera.hpp"
+#include "render/Geometry.hpp"
 //#include "Input.hpp"
 #include <iostream>
-#include "Intersection.hpp"
-#include "Grid.hpp"
-#include "Test.hpp"
+#include "geometry/Intersection.hpp"
+#include "geometry/Grid.hpp"
+#include "geometry/Test.hpp"
 int main(){
     long long n = 0;
     std::cin >> n;

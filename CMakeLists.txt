@@ -7,18 +7,19 @@ find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 
 add_executable(HW3D
-    main.cpp
-    glad/src/glad.c
-    Shaders.cpp
-    Camera.cpp
-    Geometry.cpp
-    Intersection.cpp
-    Grid.cpp
-    Test.cpp
+    src/main.cpp
+    third_party/glad/src/glad.c
+    src/render/Shaders.cpp
+    src/render/Camera.cpp
+    src/render/Geometry.cpp
+    src/geometry/Intersection.cpp
+    src/geometry/Grid.cpp
+    src/geometry/Test.cpp
 )
 
 target_include_directories(HW3D PRIVATE
-    glad/include
+    src
+    third_party/glad/include
 )
 
 target_link_libraries(HW3D

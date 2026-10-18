@@ -1,4 +1,4 @@
-#include "Geometry.hpp"
+#include "render/Geometry.hpp"
 glm::vec3 calculateNormal(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C){
     glm::vec3 AB = B - A;
     glm::vec3 AC = C - A;

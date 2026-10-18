@@ -1,4 +1,4 @@
-#include "Camera.hpp"
+#include "render/Camera.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos){
