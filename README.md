@@ -1,13 +1,13 @@
 # HW3D
 
-A program that creates random 3D triangles, finds which ones intersect, and shows them in a 3D window. Intersecting triangles are drawn in red.
+A program that creates 3D triangles, finds which ones intersect, and shows them in a 3D window. Intersecting triangles are drawn in red.
 
 ## How it works
 
 1. You enter the number of triangles `n`.
 2. The program creates `n` random triangles.
 3. A spatial grid finds pairs of triangles that may intersect.
-4. The Möller algorithm checks only these pairs.
+4. The algorithm checks only these pairs.
 5. The scene is drawn with OpenGL.
 
 ## Requirements
