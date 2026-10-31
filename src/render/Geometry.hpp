@@ -2,9 +2,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <vector>
-struct Triangle{
-    glm::vec3 A, B, C;
-};
+#include "geometry/Triangle.hpp"
 struct Geometry{
     GLuint VAO;
     GLuint VBO;
