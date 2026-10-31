@@ -7,7 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "render/Shaders.hpp"
 #include "render/Camera.hpp"
-#include "render/Geometry.hpp"
+#include "render/Mesh.hpp"
 //#include "Input.hpp"
 #include <iostream>
 #include "geometry/Intersection.hpp"
@@ -44,7 +44,7 @@ int main(){
     //colour deep
     glEnable(GL_DEPTH_TEST);
 
-    Geometry scene = createScene(triangles, intersects);
+    Mesh mesh = createScene(triangles, intersects);
     GLuint shaderProgram = createShaderProgram("shaders/vertex.glsl", "shaders/fragment.glsl");
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -102,8 +102,7 @@ int main(){
         glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
         glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.position));
 
-        glBindVertexArray(scene.VAO);
-        glDrawArrays(GL_TRIANGLES, 0, scene.vertexCount);
+        mesh.draw();
 
         glfwSwapBuffers(window);
     }

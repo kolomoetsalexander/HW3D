@@ -1,11 +1,12 @@
-#include "render/Geometry.hpp"
+#include "Geometry.hpp"
+#include "Mesh.hpp"
 glm::vec3 calculateNormal(const glm::vec3& A, const glm::vec3& B, const glm::vec3& C){
     glm::vec3 AB = B - A;
     glm::vec3 AC = C - A;
     glm::vec3 normal = glm::cross(AB, AC);
     return glm::normalize(normal);
 }
-Geometry createScene(const std::vector<Triangle>& triangles, const std::vector<bool>& intersects){
+Mesh::Mesh(const std::vector<Triangle>& triangles, const std::vector<bool>& intersects){
     std::vector<float> vertices;
     vertices.reserve(triangles.size() * 3 * 7);
     for (size_t i = 0; i < triangles.size(); ++i){
@@ -25,17 +26,11 @@ Geometry createScene(const std::vector<Triangle>& triangles, const std::vector<b
             vertices.push_back(isRed);
         }
     }
-    Geometry geometry;
-    glGenVertexArrays(1, &geometry.VAO);
-    glBindVertexArray(geometry.VAO);
-    glGenBuffers(1, &geometry.VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, geometry.VBO);
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        vertices.size() * sizeof(float),
-        vertices.data(),
-        GL_STATIC_DRAW
-    );
+    vertexCount = static_cast<int>(triangles.size() * 3);
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
@@ -44,6 +39,19 @@ Geometry createScene(const std::vector<Triangle>& triangles, const std::vector<b
 
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
-    geometry.vertexCount = static_cast<int>(triangles.size() * 3);
-    return geometry;
+}
+Mesh::~Mesh(){
+    if(VAO != 0){
+        glDeleteVertexArrays(1, &VAO);
+    }
+    if(VBO != 0){
+        glDeleteBuffers(1, &VBO);
+    }
+}
+void Mesh::draw() const{
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+}
+Mesh createScene(const std::vector<Triangle>& triangles, const std::vector<bool>& intersects){
+    return Mesh(triangles, intersects);
 }

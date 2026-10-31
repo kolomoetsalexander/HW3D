@@ -11,7 +11,7 @@ add_executable(HW3D
     third_party/glad/src/glad.c
     src/render/Shaders.cpp
     src/render/Camera.cpp
-    src/render/Geometry.cpp
+    src/render/Mesh.cpp
     src/geometry/Intersection.cpp
     src/geometry/Grid.cpp
     src/geometry/Test.cpp
