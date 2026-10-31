@@ -1,5 +1,5 @@
 #pragma once
-#include "render/Geometry.hpp"
+#include "geometry/Triangle.hpp"
 #include <cstddef>
 #include <unordered_map>
 #include <utility>

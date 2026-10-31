@@ -13,6 +13,7 @@
 #include "geometry/Intersection.hpp"
 #include "geometry/Grid.hpp"
 #include "geometry/Test.hpp"
+#include "geometry/Triangle.hpp"
 int main(){
     long long n = 0;
     std::cin >> n;
