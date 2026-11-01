@@ -38,7 +38,8 @@ int main(){
     }
     //colour deep
     glEnable(GL_DEPTH_TEST);
-
+    // RAII
+    {
     Mesh mesh (triangles, intersects);
     ShaderProgram shader("shaders/vertex.glsl", "shaders/fragment.glsl");
     Renderer renderer(mesh, shader);
@@ -69,6 +70,8 @@ int main(){
 
         glfwSwapBuffers(window);
     }
+    }
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
