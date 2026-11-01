@@ -1,13 +1,8 @@
-#include <fstream>
-#include <string>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "render/ShaderProgram.hpp"
 #include "render/Camera.hpp"
 #include "render/Mesh.hpp"
+#include "render/Renderer.hpp"
 //#include "Input.hpp"
 #include <iostream>
 #include "geometry/Intersection.hpp"
@@ -46,20 +41,7 @@ int main(){
 
     Mesh mesh (triangles, intersects);
     ShaderProgram shader("shaders/vertex.glsl", "shaders/fragment.glsl");
-
-    glm::mat4 model = glm::mat4(1.0f);
-    GLint modelLoc = shader.getUniformLocation("model");
-
-    glm::mat4 view = glm::mat4(1.0f);
-    GLint viewLoc = shader.getUniformLocation("view");
-
-    glm::mat4 perspective = glm::mat4(1.0f);
-    perspective = glm::perspective(glm::radians(70.0f), 3200.0f / 2000.0f, 0.1f, 200.0f);
-    GLint perspectiveLoc = shader.getUniformLocation("perspective");
-
-    GLint lightPosLoc = shader.getUniformLocation("lightPos");
-    GLint viewPosLoc = shader.getUniformLocation("viewPos");
-    glm::vec3 lightPos(5.0f, 8.0f, 5.0f);
+    Renderer renderer(mesh, shader);
 
     Camera camera;
     
@@ -77,24 +59,13 @@ int main(){
             camera.processKeyboard(-camera.getFront()*speed);
         }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera.processKeyboard(camera.getRight() * speed);
+            camera.processKeyboard(camera.getRight() * speed);
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
             camera.processKeyboard(-camera.getRight() * speed);
         }
-
-        view = camera.getViewMatrix();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
-
-        shader.use();
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-        glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(perspective));
-        glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
-        glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.getPosition()));
-
-        mesh.draw();
+        renderer.render(camera);
 
         glfwSwapBuffers(window);
     }

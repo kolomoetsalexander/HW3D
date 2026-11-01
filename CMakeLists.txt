@@ -12,6 +12,7 @@ add_executable(HW3D
     src/render/ShaderProgram.cpp
     src/render/Camera.cpp
     src/render/Mesh.cpp
+    src/render/Renderer.cpp
     src/geometry/Intersection.cpp
     src/geometry/Grid.cpp
     src/geometry/Test.cpp
