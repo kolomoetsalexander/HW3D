@@ -62,14 +62,7 @@ int main(){
     glm::vec3 lightPos(5.0f, 8.0f, 5.0f);
 
     Camera camera;
-    camera.position = glm::vec3(0.0f, 0.0f, 3.0f);
-    camera.front = glm::vec3(0.0f, 0.0f, -1.0f);
-    camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
-    camera.yaw = -90.0f;
-    camera.pitch = 0.0f;
-    camera.lastX = 1600.0f;
-    camera.lastY = 1000.0f;
-    camera.mousePressed = false;
+    
 
     glfwSetWindowUserPointer(window, &camera);
     glfwSetCursorPosCallback(window, mouse_callback);
@@ -78,20 +71,19 @@ int main(){
     float speed = 0.05f;
     while(!glfwWindowShouldClose(window)){
         if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-            camera.position += camera.front*speed;
+            camera.processKeyboard(camera.getFront()*speed);
         }
         if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-            camera.position -= camera.front*speed;
+            camera.processKeyboard(-camera.getFront()*speed);
         }
-        glm::vec3 cameraRight = glm::normalize(glm::cross(camera.front, camera.up));
-        if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-            camera.position += cameraRight*speed;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        camera.processKeyboard(camera.getRight() * speed);
         }
-        if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-            camera.position -= cameraRight*speed;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+            camera.processKeyboard(-camera.getRight() * speed);
         }
 
-        view = glm::lookAt(camera.position, camera.position + camera.front, camera.up);
+        view = camera.getViewMatrix();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
@@ -100,7 +92,7 @@ int main(){
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(perspective));
         glUniform3fv(lightPosLoc, 1, glm::value_ptr(lightPos));
-        glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.position));
+        glUniform3fv(viewPosLoc, 1, glm::value_ptr(camera.getPosition()));
 
         mesh.draw();
 
