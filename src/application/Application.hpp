@@ -1,8 +1,12 @@
 #pragma once
-#include <glm/glm.hpp>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include "render/Camera.hpp"
 #include "geometry/Triangle.hpp"
+#include "render/Camera.hpp"
+#include "render/Mesh.hpp"
+#include "render/Renderer.hpp"
 #include <vector>
 
 class Application{

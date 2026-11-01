@@ -16,6 +16,7 @@ add_executable(HW3D
     src/geometry/Intersection.cpp
     src/geometry/Grid.cpp
     src/geometry/Test.cpp
+    src/application/Application.cpp
 )
 
 target_include_directories(HW3D PRIVATE
