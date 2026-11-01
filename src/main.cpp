@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "render/Shaders.hpp"
+#include "render/ShaderProgram.hpp"
 #include "render/Camera.hpp"
 #include "render/Mesh.hpp"
 //#include "Input.hpp"
@@ -44,21 +44,21 @@ int main(){
     //colour deep
     glEnable(GL_DEPTH_TEST);
 
-    Mesh mesh = createScene(triangles, intersects);
-    GLuint shaderProgram = createShaderProgram("shaders/vertex.glsl", "shaders/fragment.glsl");
+    Mesh mesh (triangles, intersects);
+    ShaderProgram shader("shaders/vertex.glsl", "shaders/fragment.glsl");
 
     glm::mat4 model = glm::mat4(1.0f);
-    GLuint modelLoc = glGetUniformLocation(shaderProgram, "model");
+    GLint modelLoc = shader.getUniformLocation("model");
 
     glm::mat4 view = glm::mat4(1.0f);
-    GLuint viewLoc = glGetUniformLocation(shaderProgram, "view");
+    GLint viewLoc = shader.getUniformLocation("view");
 
     glm::mat4 perspective = glm::mat4(1.0f);
     perspective = glm::perspective(glm::radians(70.0f), 3200.0f / 2000.0f, 0.1f, 200.0f);
-    GLuint perspectiveLoc = glGetUniformLocation(shaderProgram, "perspective");
+    GLint perspectiveLoc = shader.getUniformLocation("perspective");
 
-    GLuint lightPosLoc = glGetUniformLocation(shaderProgram, "lightPos");
-    GLuint viewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
+    GLint lightPosLoc = shader.getUniformLocation("lightPos");
+    GLint viewPosLoc = shader.getUniformLocation("viewPos");
     glm::vec3 lightPos(5.0f, 8.0f, 5.0f);
 
     Camera camera;
@@ -95,7 +95,7 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwPollEvents();
 
-        glUseProgram(shaderProgram);
+        shader.use();
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
         glUniformMatrix4fv(perspectiveLoc, 1, GL_FALSE, glm::value_ptr(perspective));

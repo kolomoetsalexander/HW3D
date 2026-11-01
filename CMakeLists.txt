@@ -9,7 +9,7 @@ find_package(glm REQUIRED)
 add_executable(HW3D
     src/main.cpp
     third_party/glad/src/glad.c
-    src/render/Shaders.cpp
+    src/render/ShaderProgram.cpp
     src/render/Camera.cpp
     src/render/Mesh.cpp
     src/geometry/Intersection.cpp
