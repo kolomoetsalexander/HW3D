@@ -41,6 +41,7 @@ Mesh::Mesh(const std::vector<Triangle>& triangles, const std::vector<bool>& inte
 }
 Mesh::~Mesh(){}
 void Mesh::draw() const{
+    VAO.bind();
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 Mesh createScene(const std::vector<Triangle>& triangles, const std::vector<bool>& intersects){

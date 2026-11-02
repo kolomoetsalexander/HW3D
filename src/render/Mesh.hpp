@@ -18,7 +18,7 @@ public:
 
 private:
     VertexArray VAO;
-    VertexArray VBO;
+    VertexBuffer VBO;
     GLsizei vertexCount = 0;
 
 };
