@@ -3,14 +3,12 @@
 #include "geometry/Grid.hpp"
 #include "geometry/Test.hpp"
 #include "geometry/Triangle.hpp"
-
+#include "input/Input.hpp"
 #include <iostream>
 #include <vector>
 
 int main() {
-    long long n = 0;
-    std::cin >> n;
-    std::vector<Triangle> triangles = generateTriangles(n);
+    std::vector<Triangle> triangles = readTriangles(std::cin);
     // Поиск пересекающихся треугольников
     std::vector<bool> intersects(triangles.size(), false);
     Grid grid(triangles);

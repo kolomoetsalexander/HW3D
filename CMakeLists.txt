@@ -19,6 +19,7 @@ add_executable(HW3D
     src/geometry/Grid.cpp
     src/geometry/Test.cpp
     src/application/Application.cpp
+    src/input/Input.cpp
 )
 
 target_include_directories(HW3D PRIVATE
