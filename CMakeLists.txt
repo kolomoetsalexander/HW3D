@@ -13,6 +13,8 @@ add_executable(HW3D
     src/render/Camera.cpp
     src/render/Mesh.cpp
     src/render/Renderer.cpp
+    src/render/VertexArray.cpp
+    src/render/VertexBuffer.cpp
     src/geometry/Intersection.cpp
     src/geometry/Grid.cpp
     src/geometry/Test.cpp
