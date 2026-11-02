@@ -1,6 +1,7 @@
 #pragma once
 #include <glad/glad.h>
 #include "geometry/Triangle.hpp"
+#include "Geometry.hpp"
 #include <vector>
 
 class Mesh{
