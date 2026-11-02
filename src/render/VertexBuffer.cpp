@@ -1,11 +1,11 @@
 #include "VertexBuffer.hpp"
 
 VertexBuffer::VertexBuffer(){
-    glGenVertexArrays(1, &VBO);
+    glGenBuffers(1, &VBO);
 }
 VertexBuffer::~VertexBuffer(){
     if(VBO != 0){
-        glDeleteVertexArrays(1, &VBO);
+        glDeleteBuffers(1, &VBO);
     }
 }
 void VertexBuffer::bind() const{
