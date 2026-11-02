@@ -27,10 +27,8 @@ Mesh::Mesh(const std::vector<Triangle>& triangles, const std::vector<bool>& inte
         }
     }
     vertexCount = static_cast<int>(triangles.size() * 3);
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    VAO.bind();
+    VBO.bind();
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -41,16 +39,8 @@ Mesh::Mesh(const std::vector<Triangle>& triangles, const std::vector<bool>& inte
     glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 }
-Mesh::~Mesh(){
-    if(VAO != 0){
-        glDeleteVertexArrays(1, &VAO);
-    }
-    if(VBO != 0){
-        glDeleteBuffers(1, &VBO);
-    }
-}
+Mesh::~Mesh(){}
 void Mesh::draw() const{
-    glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 Mesh createScene(const std::vector<Triangle>& triangles, const std::vector<bool>& intersects){

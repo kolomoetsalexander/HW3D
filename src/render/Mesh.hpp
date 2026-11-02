@@ -2,6 +2,8 @@
 #include <glad/glad.h>
 #include "geometry/Triangle.hpp"
 #include "Geometry.hpp"
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
 #include <vector>
 
 class Mesh{
@@ -15,8 +17,8 @@ public:
     void draw() const;
 
 private:
-    GLuint VAO = 0;
-    GLuint VBO = 0;
+    VertexArray VAO;
+    VertexArray VBO;
     GLsizei vertexCount = 0;
 
 };
