@@ -20,8 +20,8 @@ bool segmentsIntersect2D(const glm::vec2& p1, const glm::vec2& p2, const glm::ve
     float d3 = cross2(p2 - p1, p3 - p1);
     float d4 = cross2(p2 - p1, p4 - p1);
 
-    bool straddle1 = (d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0);
-    bool straddle2 = (d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0);
+    bool straddle1 = (d1 >= 0 && d2 <= 0) || (d1 <= 0 && d2 >= 0);
+    bool straddle2 = (d3 >= 0 && d4 <= 0) || (d3 <= 0 && d4 >= 0);
     return straddle1 && straddle2;
 }
 //does point p lie inside the triangle (a,b,c) in 2D
