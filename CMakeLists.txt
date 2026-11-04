@@ -32,3 +32,34 @@ target_link_libraries(HW3D
     glfw
     glm::glm
 )
+
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+)
+
+FetchContent_MakeAvailable(googletest)
+
+enable_testing()
+
+add_executable(HW3DTests
+    tests/IntersectionTests.cpp
+    tests/GridTests.cpp
+
+    src/geometry/Intersection.cpp
+    src/geometry/Grid.cpp
+)
+
+target_include_directories(HW3DTests PRIVATE
+    src
+)
+
+target_link_libraries(HW3DTests PRIVATE
+    glm::glm
+    GTest::gtest_main
+)
+
+include(GoogleTest)
+gtest_discover_tests(HW3DTests)
